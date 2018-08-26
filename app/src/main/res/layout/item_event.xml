@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="mEvent"
+            type="com.joshtalks.task.modals.Posts" />
+
+        <variable
+            name="mUtility"
+            type="com.joshtalks.task.common.Utility" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
+        app:cardUseCompatPadding="true">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivEvent"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/gradient_bg"
+                app:layout_constraintBottom_toBottomOf="@+id/ivEvent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvEventTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@{mEvent.event_name}"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@+id/tvEventDate"
+                app:layout_constraintEnd_toEndOf="@+id/tvEventDate"
+                app:layout_constraintStart_toStartOf="@+id/tvEventDate"
+                tools:text="@tools:sample/first_names" />
+
+            <TextView
+                android:id="@+id/tvEventDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:maxLines="1"
+                android:text="@{mUtility.getFormatedDate(mEvent.event_date)}"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="@tools:sample/date/ddmmyy" />
+
+            <TextView
+                android:id="@+id/tvViews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/ic_views"
+                android:text="@{mUtility.getKMGFormat(mEvent.views)}"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvEventDate"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvEventDate"
+                tools:text="@tools:sample/date/day_of_week" />
+
+            <TextView
+                android:id="@+id/tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/ic_like"
+                android:text="@{mUtility.getKMGFormat(mEvent.likes)}"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvEventDate"
+                app:layout_constraintEnd_toStartOf="@+id/tvViews"
+                app:layout_constraintTop_toTopOf="@+id/tvEventDate"
+                tools:text="@tools:sample/date/day_of_week" />
+
+            <TextView
+                android:id="@+id/tvShares"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:layout_marginBottom="5dp"
+                android:drawableStart="@drawable/ic_share"
+                android:text="@{mUtility.getKMGFormat(mEvent.shares)}"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/tvViews"
+                app:layout_constraintEnd_toEndOf="@+id/tvViews"
+                app:layout_constraintStart_toStartOf="@+id/tvViews"
+                tools:text="@tools:sample/date/day_of_week" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</layout>
