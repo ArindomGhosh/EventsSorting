@@ -101,7 +101,7 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
                 if (!it.isEmpty()){
                     mEventList.clear()
                     mEventList.addAll(it)
-                    updateAdapter(mEventList)
+                    adapter.updatePostList(mEventList)
                 }else{
                     updateDataBase(mEventList)
                 }
