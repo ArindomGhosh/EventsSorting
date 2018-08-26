@@ -49,9 +49,13 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     private val dataBaseObserver = Observer<List<Posts>> { it ->
         it?.let {
-            mEventList.clear()
-            mEventList.addAll(it)
-            adapter.updatePostList(it)
+            if (it.isEmpty()) {
+                updateDataBase(this.mEventList)
+            } else {
+                mEventList.clear()
+                mEventList.addAll(it)
+                adapter.updatePostList(mEventList)
+            }
         }
     }
     private val mPaginationListener by lazy {
@@ -161,8 +165,13 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     }
 
-    private fun updateDataBase(mEventList: List<Posts>) {
+    private fun updateDataBase(mEventList: CopyOnWriteArrayList<Posts>) {
         DeletePost(mAppDatabase).execute()
         InsertPost(mAppDatabase).execute(mEventList)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateDataBase(mEventList)
     }
 }
