@@ -10,6 +10,6 @@ import org.kodein.di.generic.singleton
 
 val applicationModule=Kodein.Module("BASE_APP_MODULE"){
     bind<MainActivityRepository>() with singleton { MainActivityRepository() }
-    bind<ViewModalFactory>() with singleton { ViewModalFactory(instance()) }
+    bind<ViewModalFactory>() with singleton { ViewModalFactory(instance(),instance()) }
     bind<AppDataBase>() with singleton { AppDataBase.getInMemoryDatabase(instance()) }
 }

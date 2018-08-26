@@ -45,9 +45,15 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     private var mEventList = CopyOnWriteArrayList<Posts>()
 
-    private val mAppDataBase: AppDataBase by instance()
+    private val mAppDatabase: AppDataBase by instance()
 
-
+    private val dataBaseObserver = Observer<List<Posts>> { it ->
+        it?.let {
+            mEventList.clear()
+            mEventList.addAll(it)
+            adapter.updatePostList(it)
+        }
+    }
     private val mPaginationListener by lazy {
         object : PageinationListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
@@ -88,21 +94,13 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
             srContent.isRefreshing = false
             getDataFromDatabase()
         } else {
+            mMainActivityViewModal.getPostLiveData().removeObserver(dataBaseObserver)
             getDataFromAPI(apiKEy)
         }
     }
 
     private fun getDataFromDatabase() {
-        mMainActivityViewModal.getPostLiveData(mAppDataBase).observe(this, Observer { it ->
-            it?.let {
-                if (!mEventList.isEmpty()) {
-                    updateDataBase(mEventList)
-                } else {
-                    mEventList.addAll(it)
-                }
-                adapter.updatePostList(mEventList)
-            }
-        })
+        mMainActivityViewModal.getPostLiveData().observe(this, dataBaseObserver)
     }
 
     private fun getDataFromAPI(apiKEy: String) {
@@ -120,11 +118,6 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
                 adapter.updatePostList(mEventList)
             }
         })
-    }
-
-    private fun updateDataBase(mEventList: CopyOnWriteArrayList<Posts>) {
-        DeletePost(mAppDataBase).execute()
-        InsertPost(mAppDataBase).execute(mEventList)
     }
 
     private fun updateAdapter(list: List<Posts>, mCompareParameter: CompareParameter = CompareParameter.Date) {
@@ -168,9 +161,8 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     }
 
-    override fun onPause() {
-        super.onPause()
-        updateDataBase(mEventList)
-        super.onBackPressed()
+    private fun updateDataBase(mEventList: List<Posts>) {
+        DeletePost(mAppDatabase).execute()
+        InsertPost(mAppDatabase).execute(mEventList)
     }
 }
