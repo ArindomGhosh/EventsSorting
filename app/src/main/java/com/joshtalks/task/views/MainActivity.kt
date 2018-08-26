@@ -27,6 +27,8 @@ import com.joshtalks.task.repositories.KEY_TWO
 import com.joshtalks.task.viewmodals.MainActivityViewModal
 import kotlinx.android.synthetic.main.activity_main.*
 import org.kodein.di.generic.instance
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executors
 
 enum class CompareParameter {
     Date, Likes, Views, Shares
@@ -42,9 +44,13 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     private val linearLayoutManager by lazy { LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) }
 
-    private var mEventList = mutableListOf<Posts>()
+    private var mEventList = CopyOnWriteArrayList <Posts>()
 
     private val mAppDataBase: AppDataBase by instance()
+
+    private val mInsertDatabaseObject by lazy { InsertPost(mAppDataBase) }
+    private val mDeleteDatabaseObject by lazy { DeletePost(mAppDataBase) }
+
     private val mPaginationListener by lazy {
         object : PageinationListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
@@ -92,9 +98,13 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
     private fun getDataFromDatabase() {
         mMainActivityViewModal.getPostLiveData(mAppDataBase).observe(this, Observer { it ->
             it?.let {
-                mEventList.clear()
-                mEventList.addAll(it)
-                updateAdapter(mEventList)
+                if (!it.isEmpty()){
+                    mEventList.clear()
+                    mEventList.addAll(it)
+                    updateAdapter(mEventList)
+                }else{
+                    updateDataBase(mEventList)
+                }
             }
         })
     }
@@ -112,12 +122,11 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
                 }
                 mEventList.addAll(it.posts)
                 adapter.updatePostList(mEventList)
-                updateDataBase(mEventList)
             }
         })
     }
 
-    private fun updateDataBase(mEventList: List<Posts>) {
+    private fun updateDataBase(mEventList: CopyOnWriteArrayList<Posts>) {
         DeletePost(mAppDataBase).execute()
         InsertPost(mAppDataBase).execute(mEventList)
     }
@@ -161,5 +170,10 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     override fun onPostClicked(mPost: Posts) {
 
+    }
+
+    override fun onBackPressed() {
+        updateDataBase(mEventList)
+        super.onBackPressed()
     }
 }
