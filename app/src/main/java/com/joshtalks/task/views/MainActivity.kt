@@ -28,7 +28,6 @@ import com.joshtalks.task.viewmodals.MainActivityViewModal
 import kotlinx.android.synthetic.main.activity_main.*
 import org.kodein.di.generic.instance
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.Executors
 
 enum class CompareParameter {
     Date, Likes, Views, Shares
@@ -44,12 +43,10 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     private val linearLayoutManager by lazy { LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) }
 
-    private var mEventList = CopyOnWriteArrayList <Posts>()
+    private var mEventList = CopyOnWriteArrayList<Posts>()
 
     private val mAppDataBase: AppDataBase by instance()
 
-    private val mInsertDatabaseObject by lazy { InsertPost(mAppDataBase) }
-    private val mDeleteDatabaseObject by lazy { DeletePost(mAppDataBase) }
 
     private val mPaginationListener by lazy {
         object : PageinationListener(linearLayoutManager) {
@@ -98,13 +95,13 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
     private fun getDataFromDatabase() {
         mMainActivityViewModal.getPostLiveData(mAppDataBase).observe(this, Observer { it ->
             it?.let {
-                if (!it.isEmpty()){
+                if (mEventList.size>it.size){
+                    updateDataBase(mEventList)
+                }else{
                     mEventList.clear()
                     mEventList.addAll(it)
-                    adapter.updatePostList(mEventList)
-                }else{
-                    updateDataBase(mEventList)
                 }
+                adapter.updatePostList(mEventList)
             }
         })
     }
@@ -172,7 +169,8 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
 
     }
 
-    override fun onBackPressed() {
+    override fun onPause() {
+        super.onPause()
         updateDataBase(mEventList)
         super.onBackPressed()
     }
