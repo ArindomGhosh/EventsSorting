@@ -95,10 +95,9 @@ class MainActivity : BaseActivity(), EvenPostsAdapter.OnPostClickListener {
     private fun getDataFromDatabase() {
         mMainActivityViewModal.getPostLiveData(mAppDataBase).observe(this, Observer { it ->
             it?.let {
-                if (mEventList.size>it.size){
+                if (!mEventList.isEmpty()) {
                     updateDataBase(mEventList)
-                }else{
-                    mEventList.clear()
+                } else {
                     mEventList.addAll(it)
                 }
                 adapter.updatePostList(mEventList)
