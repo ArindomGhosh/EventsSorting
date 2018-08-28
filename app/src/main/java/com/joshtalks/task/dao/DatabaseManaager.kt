@@ -1,18 +1,21 @@
 package com.joshtalks.task.dao
 
-import android.os.AsyncTask
 import com.joshtalks.task.database.AppDataBase
 import com.joshtalks.task.modals.Posts
-import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
-class InsertPost(val mDatabase: AppDataBase) : AsyncTask<CopyOnWriteArrayList<Posts>, Void, Unit>() {
-     override fun doInBackground(vararg params: CopyOnWriteArrayList <Posts>) {
-        params[0].forEach { mDatabase.postModal().insertPost(it) }
+class DatabaseManager(private val mAppDataBase: AppDataBase) {
+    private val ioExecutor: Executor= Executors.newSingleThreadExecutor()
+    fun insertData(mPosts: List<Posts>) {
+        ioExecutor.execute {
+            mAppDataBase.postModal().insertPostAll(mPosts)
+        }
     }
-}
 
-class DeletePost(val mDatabase: AppDataBase) : AsyncTask<Unit, Void, Unit>() {
-    override fun doInBackground(vararg params: Unit?) {
-        mDatabase.postModal().deleteAll()
+    fun deleteAll() {
+        ioExecutor.execute {
+            mAppDataBase.postModal().deleteAll()
+        }
     }
 }
