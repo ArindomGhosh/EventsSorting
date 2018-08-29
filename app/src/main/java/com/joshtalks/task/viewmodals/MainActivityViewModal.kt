@@ -1,5 +1,6 @@
 package com.joshtalks.task.viewmodals
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
@@ -17,5 +18,4 @@ class MainActivityViewModal(private val mItemBoundaryCallback: ItemBoundaryCallb
     fun getPostLiveData(mQuey:DataSource.Factory<Int,Posts>) = LivePagedListBuilder(mQuey, config)
             .setBoundaryCallback(mItemBoundaryCallback)
             .build()
-
 }

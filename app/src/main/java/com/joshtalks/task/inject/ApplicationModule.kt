@@ -14,7 +14,7 @@ import org.kodein.di.generic.singleton
 val applicationModule = Kodein.Module("BASE_APP_MODULE") {
     bind<MainActivityRepository>() with singleton { MainActivityRepository() }
     bind<DatabaseManager>() with singleton { DatabaseManager(instance()) }
-    bind<ItemBoundaryCallback>() with singleton { ItemBoundaryCallback(instance(), instance()) }
+    bind<ItemBoundaryCallback>() with singleton { ItemBoundaryCallback(instance(), instance(),instance()) }
     bind<AppDataBase>() with singleton { AppDataBase.getInMemoryDatabase(instance()) }
     bind<ViewModalFactory>() with singleton { ViewModalFactory(instance(), instance()) }
     bind<GlobalSharedPreferance>() with singleton { GlobalSharedPreferance(instance()) }

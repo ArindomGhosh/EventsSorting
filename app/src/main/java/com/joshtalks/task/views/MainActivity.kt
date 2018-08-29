@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.arch.paging.PagedList
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
@@ -14,9 +15,7 @@ import com.joshtalks.task.adapters.EventPostPagedListAdapter
 import com.joshtalks.task.common.BaseActivity
 import com.joshtalks.task.common.ImageLoader
 import com.joshtalks.task.database.AppDataBase
-import com.joshtalks.task.database.GlobalSharedPreferance
 import com.joshtalks.task.modals.Posts
-import com.joshtalks.task.repositories.KEY_ONE
 import com.joshtalks.task.viewmodals.MainActivityViewModal
 import kotlinx.android.synthetic.main.activity_main.*
 import org.kodein.di.generic.instance
@@ -35,6 +34,8 @@ class MainActivity : BaseActivity(), EventPostPagedListAdapter.OnPostClickListen
 
     private val mDataBaseObserver = Observer<PagedList<Posts>> { it ->
         it?.let {
+//            println("size ${it.size}")
+            if (it.isEmpty()) Snackbar.make(postContainer, "No data to show now.", Snackbar.LENGTH_LONG).show()
             adapter.updatePostList(it)
         }
     }
@@ -47,11 +48,8 @@ class MainActivity : BaseActivity(), EventPostPagedListAdapter.OnPostClickListen
         rvItems.adapter = adapter
         rvItems.layoutManager = linearLayoutManager
         progress.visibility = View.GONE
-        srContent.isRefreshing = false
+
         mMainActivityViewModal.getPostLiveData(mAppDataBase.postModal().getAllPostsDataSource()).observe(this, mDataBaseObserver)
-        srContent.setOnRefreshListener {
-            srContent.isRefreshing = false
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

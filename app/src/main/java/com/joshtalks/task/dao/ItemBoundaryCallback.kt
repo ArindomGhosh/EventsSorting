@@ -12,12 +12,13 @@ import com.joshtalks.task.repositories.MainActivityRepository
 import java.util.concurrent.Executors
 
 class ItemBoundaryCallback(private val mMainActivityRepository: MainActivityRepository,
-                           private val mDatabaseManager: DatabaseManager) : PagedList.BoundaryCallback<Posts>() {
+                           private val mDatabaseManager: DatabaseManager,
+                           private val mGlobalSharedPreferance: GlobalSharedPreferance) : PagedList.BoundaryCallback<Posts>() {
     private var isLoading = false
-    private var apiKey = KEY_ONE
+    private var apiKey = mGlobalSharedPreferance.getScrollKey()
 
     override fun onItemAtEndLoaded(itemAtEnd: Posts) {
-        if (TextUtils.isEmpty(apiKey))return
+        if (TextUtils.isEmpty(apiKey)) return
         if (isLoading) return
         isLoading = true
         mMainActivityRepository.getPosts(apiKey, object : MainActivityRepository.PostAPIListner<EventResponse, String> {
@@ -31,7 +32,6 @@ class ItemBoundaryCallback(private val mMainActivityRepository: MainActivityRepo
 
             }
         })
-
     }
 
     fun setNextPage(response: EventResponse) {
@@ -40,19 +40,21 @@ class ItemBoundaryCallback(private val mMainActivityRepository: MainActivityRepo
             2 -> KEY_THREE
             else -> ""
         }
+        mGlobalSharedPreferance.putScrollID(apiKey)
     }
 
     override fun onItemAtFrontLoaded(itemAtFront: Posts) {
-
-
+//        println("at Front ${itemAtFront.event_name}")
+//        println("at front ${itemAtFront.primaryKey}")
     }
 
     override fun onZeroItemsLoaded() {
-        mMainActivityRepository.getPosts(apiKey, object : MainActivityRepository.PostAPIListner<EventResponse, String> {
+        mMainActivityRepository.getPosts(KEY_ONE, object : MainActivityRepository.PostAPIListner<EventResponse, String> {
             override fun onSuccess(response: EventResponse) {
                 Executors.newSingleThreadExecutor().execute {
                     mDatabaseManager.insertData(response.posts)
                     setNextPage(response)
+                    mGlobalSharedPreferance.putScrollID(KEY_TWO)
                 }
             }
 

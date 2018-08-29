@@ -15,12 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/srContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvItems"
             android:layout_width="match_parent"
@@ -28,5 +22,4 @@
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:spanCount="2"
             tools:listitem="@layout/item_event" />
-    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.constraint.ConstraintLayout>
